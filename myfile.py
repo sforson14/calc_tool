@@ -1,11 +1,9 @@
+import streamlit as st 
+import pandas as pd 
+
 import sys
 sys.path.insert(1, "/Users/stephenforson/.local/share/virtualenvs/Calc_tool-n54-u4Hm/lib/python3.9/site-packages")
 from streamlit_option_menu import option_menu
-
-import streamlit as st 
-import pandas as pd 
-from streamlit_option_menu import option_menu
-
 
 #------- PAGE SETTINGS------------
 page_title = "GHG Emission Calculator"
