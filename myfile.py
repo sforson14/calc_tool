@@ -1,6 +1,5 @@
 import streamlit as st 
 import pandas as pd 
-from streamlit_echarts import st_echarts
 from streamlit_option_menu import option_menu
 
 
