@@ -98,11 +98,11 @@ with st.form("my_form", clear_on_submit=True):
     #---Creating the submit button------------- 
     submitted = st.form_submit_button("Save Data")
     if submitted:
-        selected_option1 = {selected_option1:selected_option1}
-        selected_option2 = {selected_option2:selected_option2}
-        selected_option3 = {selected_option3:selected_option3}
-        selected_option4 = {selected_option4: selected_option4}
-        values = {values:values}
-        total = {total:total}
+        selected_option1 = selected_option1
+        selected_option2 = selected_option2
+        selected_option3 = selected_option3
+        selected_option4 = selected_option4
+        values = values
+        total = total
         db.put({"scope":selected_option1,"Category":selected_option2,"subCategory":selected_option3,"Material":selected_option4,"Quantity":values,"Total Emission":total})
 
