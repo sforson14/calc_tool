@@ -1,10 +1,15 @@
 import streamlit as st 
 import pandas as pd 
-
+from deta import Deta
 import sys
 sys.path.insert(1, "/Users/stephenforson/.local/share/virtualenvs/Calc_tool-n54-u4Hm/lib/python3.9/site-packages")
 from streamlit_option_menu import option_menu
 
+#----connect database-----
+
+deta = Deta(st.secrets["DETA_KEY"])
+
+db = deta.Base("emissions")
 #------- PAGE SETTINGS------------
 page_title = "GHG Emission Calculator"
 Page_icon = "🌳"
@@ -93,6 +98,11 @@ with st.form("my_form", clear_on_submit=True):
     #---Creating the submit button------------- 
     submitted = st.form_submit_button("Save Data")
     if submitted:
-        st.write("scope:",selected_option1)
-
+        selected_option1 = {selected_option1:selected_option1}
+        selected_option2 = {selected_option2:selected_option2}
+        selected_option3 = {selected_option3:selected_option3}
+        selected_option4 = {selected_option4: selected_option4}
+        values = {values:values}
+        total = {total:total}
+        db.put({"scope":selected_option1,"Category":selected_option2,"subCategory":selected_option3,"Material":selected_option4,"Quantity":values,"Total Emission":total})
 
