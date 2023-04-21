@@ -10,6 +10,9 @@ from streamlit_option_menu import option_menu
 deta = Deta(st.secrets["DETA_KEY"])
 
 db = deta.Base("emissions")
+#-----return all dictionary in database-------
+db_content = db.fetch().items
+
 #------- PAGE SETTINGS------------
 page_title = "GHG Emission Calculator"
 Page_icon = "🌳"
@@ -47,62 +50,108 @@ def get_data ():
 data = get_data()
 data_na = data.dropna()
 
+if selected == "Data Entry":
+    options1 = data_na.iloc[:,0].unique()
+    selected_option1 = st.selectbox("Select Scope:",options1)
 
-options1 = data_na.iloc[:,0].unique()
-selected_option1 = st.selectbox("Select Scope:",options1)
+    #----filtering scope-------
+    filtered_data = data_na[data_na.iloc[:,0]==selected_option1]
 
-#----filtering scope-------
-filtered_data = data_na[data_na.iloc[:,0]==selected_option1]
+    #----get unique values for option 2-----
+    option2 = filtered_data.iloc[:,1].unique()
+    selected_option2 = st.selectbox("Select Category:",option2)
 
-#----get unique values for option 2-----
-option2 = filtered_data.iloc[:,1].unique()
-selected_option2 = st.selectbox("Select Category:",option2)
+    #-----filter based on option 2-----
+    filter_2 = filtered_data[filtered_data.iloc[:,1]==selected_option2]
+    option3 = filter_2.iloc[:,2].unique()
+    selected_option3 = st.selectbox("Select Sub Category:",option3)
 
-#-----filter based on option 2-----
-filter_2 = filtered_data[filtered_data.iloc[:,1]==selected_option2]
-option3 = filter_2.iloc[:,2].unique()
-selected_option3 = st.selectbox("Select Sub Category:",option3)
+    #----filter based on option 3----
+    filter_3 = filter_2[filter_2.iloc[:,2]== selected_option3]
+    option4 = filter_3.iloc[:,3].unique()
+    selected_option4 = st.selectbox("Select Material:",option4)
 
-#----filter based on option 3----
-filter_3 = filter_2[filter_2.iloc[:,2]== selected_option3]
-option4 = filter_3.iloc[:,3].unique()
-selected_option4 = st.selectbox("Select Material:",option4)
+    #-----filter based on option 4----
+    filter_4 = filter_3[filter_3.iloc[:,3]==selected_option4]
+    option5 = filter_4["UOM"].unique()
+    selected_option5 = st.selectbox("Select Unit of Measure:",option5)
 
-#-----filter based on option 4----
-filter_4 = filter_3[filter_3.iloc[:,3]==selected_option4]
-option5 = filter_4["UOM"].unique()
-selected_option5 = st.selectbox("Select Unit of Measure:",option5)
+    #----filter based on option 5-------
+    filter_5 = filter_4[filter_4["UOM"]== selected_option5]
+    option6 = filter_5["GHG/Unit"].unique()
+    selected_option6 = st.selectbox("Select Unit:",option6)
 
-#----filter based on option 5-------
-filter_5 = filter_4[filter_4["UOM"]== selected_option5]
-option6 = filter_5["GHG/Unit"].unique()
-selected_option6 = st.selectbox("Select Unit:",option6)
+    #-----filter based on last option-----
+    filter_6 = filter_5[filter_5["GHG/Unit"]== selected_option6]
+    option_7 = filter_6["GHG Conversion Factor 2022"].unique()
+    selected_option7 = st.selectbox("Emission Factor:",option_7)
+    #option7_int = int(selected_option7)
 
-#-----filter based on last option-----
-filter_6 = filter_5[filter_5["GHG/Unit"]== selected_option6]
-option_7 = filter_6["GHG Conversion Factor 2022"].unique()
-selected_option7 = st.selectbox("Emission Factor:",option_7)
-#option7_int = int(selected_option7)
+    #----create an input field-------
+    with st.form("my_form", clear_on_submit=True):
+        values = st.number_input("Enter Amount",format="%i",min_value=0)
+        values_int = int(values)
 
-#----create an input field-------
-with st.form("my_form", clear_on_submit=True):
-    values = st.number_input("Enter Amount",format="%i",min_value=0)
-    values_int = int(values)
+    #----multiplying the two columns together to find total emission----
 
-#----multiplying the two columns together to find total emission----
+        emission = int(selected_option7 * values_int)
 
-    emission = int(selected_option7 * values_int)
+        total = st.number_input("Total Emissions:",emission)
 
-    total = st.number_input("Total Emissions:",emission)
+        #---Creating the submit button------------- 
+        submitted = st.form_submit_button("Save Data")
+        if submitted:
+            selected_option1 = selected_option1
+            selected_option2 = selected_option2
+            selected_option3 = selected_option3
+            selected_option4 = selected_option4
+            values = values
+            total = total
+            st.success("Data Saved Successfully!")
+            db.put({"scope":selected_option1,"Category":selected_option2,"subCategory":selected_option3,"Material":selected_option4,"Quantity":values,"Total Emission":total})
 
-    #---Creating the submit button------------- 
-    submitted = st.form_submit_button("Save Data")
-    if submitted:
-        selected_option1 = selected_option1
-        selected_option2 = selected_option2
-        selected_option3 = selected_option3
-        selected_option4 = selected_option4
-        values = values
-        total = total
-        db.put({"scope":selected_option1,"Category":selected_option2,"subCategory":selected_option3,"Material":selected_option4,"Quantity":values,"Total Emission":total})
+#-------Get the data and plotting the graph---------------
+if selected == "Data Visualization":
+    df = st.dataframe(db_content)
+   
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    st.sidebar.header("GHG Emissions Dashboard")
+    
+
+
+
+
+
+
+
+
+
+
 
