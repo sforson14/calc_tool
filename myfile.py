@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd 
 from deta import Deta
 import sys
-sys.path.insert(1, "/Users/stephenforson/.local/share/virtualenvs/Calc_tool-n54-u4Hm/lib/python3.9/site-packages")
 from streamlit_option_menu import option_menu
 
 #----connect database-----
