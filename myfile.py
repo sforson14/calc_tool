@@ -9,12 +9,17 @@ from streamlit_option_menu import option_menu
 
 deta = Deta(st.secrets["DETA_KEY"])
 
+#-----name of database from deta-----
+
 db = deta.Base("emissions")
 
-#-----return all dictionary in database-------
-
-
+#-----return all items in database-------
 db_content = db.fetch().items
+
+#----fetching scope category-----
+def get_scope():
+    items = db.fetch()
+    scope = [item["Scope"]for item in items]
 
 
 #------- PAGE SETTINGS------------
@@ -92,7 +97,7 @@ if selected == "Data Entry":
     #option7_int = int(selected_option7)
 
     #----create an input field-------
-    with st.form("my_form", clear_on_submit=False):
+    with st.form("my_form", clear_on_submit=True):
         values = st.number_input("Enter Amount",format="%i",min_value=0)
         values_int = int(values)
 
@@ -112,15 +117,15 @@ if selected == "Data Entry":
             values = values
             total = total
             st.success("Data Saved Successfully!")
-            db.put({"key":selected_option1,"Category":selected_option2,"subCategory":selected_option3,"Material":selected_option4,"Quantity":values,"Total Emission":total})
+            db.put({"Scope":selected_option1,"Category":selected_option2,"subCategory":selected_option3,"Material":selected_option4,"Quantity":values,"Total Emission":total})
 
 #-------Get the data and plotting the graph---------------
 if selected == "Data Visualization":
-    #st.header("Emission Dashboard")
-    #with st.form("Saved_scope"):
-        #scope = st.selectbox("Select Scope:",get_scope())
-        #submitted = st.form_submit_button("Plot Scope")
-    df = st.dataframe(db_content)
+    st.header("Emission Dashboard")
+    with st.form("Saved_scope"):
+        scope = st.selectbox("Select Scope:",get_scope())
+        submitted = st.form_submit_button("Plot Scope")
+    #df = st.dataframe(db_content)
 
 
     
