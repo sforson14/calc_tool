@@ -120,11 +120,11 @@ if selected == "Data Entry":
 
 #-------Get the data and plotting the graph---------------
 if selected == "Data Visualization":
-    st.header("Emission Dashboard")
-    with st.form("Saved_scope"):
-        scope = st.selectbox("Select Scope:",get_scope())
-        submitted = st.form_submit_button("Plot Scope")
-    #df = st.dataframe(db_content)
+    #st.header("Emission Dashboard")
+    #with st.form("Saved_scope"):
+        #scope = st.selectbox("Select Scope:",get_scope())
+        #submitted = st.form_submit_button("Plot Scope")
+    df = st.dataframe(db_content)
 
 
     
