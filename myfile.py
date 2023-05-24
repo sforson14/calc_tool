@@ -1,5 +1,6 @@
 import streamlit as st 
 import pandas as pd 
+import plotly.express as px
 from deta import Deta
 import sys
 from streamlit_option_menu import option_menu
@@ -124,42 +125,116 @@ if selected == "Data Visualization":
     #with st.form("Saved_scope"):
         #scope = st.selectbox("Select Scope:",get_scope())
         #submitted = st.form_submit_button("Plot Scope")
-    df = st.dataframe(db_content)
+
+#-----Convert database into dictionary----------       
+    df = pd.DataFrame.from_dict(db_content)
+    category_name = "Scope"
+    unique_cat = df[category_name].unique()
+    #table = st.dataframe(df)
 
 
-    
-
-
-   
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#--------side bar filter 
 
     st.sidebar.header("GHG Emissions Dashboard")
+    st.sidebar.header("Please Filter Scope:")
+    scope_cat = st.sidebar.selectbox(
+        "Select Scope:",
+        options=df[category_name].unique()
+    )
+
+    df_selection = df.query(
+        "Scope == @scope_cat"
+    )
+
+    #------MAINPAGE-------
+    st.title(":bar_chart: Emissions Dashboard")
+    st.markdown("##")
+
+
+    #--Emission KPI---
+
+    tot_emission = int(df_selection["Total Emission"].sum())
+    total_quantity = int(df_selection["Quantity"].sum())
+    tot_emis = int(df["Total Emission"].sum())
+
+    left_column,middle_column,right_column = st.columns(3)
+    with left_column:
+        st.subheader("Total Emissions Per Category:")
+        st.subheader(f"{tot_emission:,} kgCO2e")
+    with middle_column:
+        st.subheader("Total Material Quantity")
+        st.subheader(total_quantity)
+    with right_column:
+        st.subheader("Total Project Emissions")
+        st.subheader(f"{tot_emis:,} kgCO2e")
+
+    st.markdown("---")
+
+    #-----Dashboard visual-------
+    emission_by_material = (
+        df_selection.groupby(by=["Material"]).sum()[["Total Emission"]].sort_values(by="Total Emission")
+    )
+    fig_emission_tot = px.bar(
+     emission_by_material ,
+     x= "Total Emission",
+     y= emission_by_material.index,
+     orientation="h",
+     title="<b>Emissions by Material </b>",
+     color_discrete_sequence=["#0083B8"]*len(emission_by_material),
+     template="plotly_white",
+    )
+
+    st.plotly_chart(fig_emission_tot)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #st.dataframe(df_selection)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 
 
